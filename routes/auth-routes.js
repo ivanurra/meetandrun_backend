@@ -11,12 +11,13 @@ const User = require('../models/User');
 
 authRoutes.post('/signup', (req, res, next) => {
 
-	const username = req.body.username;
-	const password = req.body.password;
-	// const { email, username, password, runnerType, experience, stravaLink, personalLink} = req.body
+	// const email = req.body.email
+	// const username = req.body.username;
+	// const password = req.body.password
+	const { email, username, password, runnerType, experience, stravaLink, personalLink} = req.body
 
-	if (!username || !password) {
-		res.status(400).json({ message: 'Provide username and password' });
+	if (!email || !password) {
+		res.status(400).json({ message: 'Provide email and password' });
 		return;
 	}
 
@@ -27,14 +28,14 @@ authRoutes.post('/signup', (req, res, next) => {
 		return;
 	}
 
-	User.findOne({ username }, (err, foundUser) => {
+	User.findOne({ email }, (err, foundUser) => {
 		if (err) {
-			res.status(500).json({ message: 'Username check went bad.' });
+			res.status(500).json({ message: 'Email check went bad.' });
 			return;
 		}
 
 		if (foundUser) {
-			res.status(400).json({ message: 'Username taken. Choose another one.' });
+			res.status(400).json({ message: 'Email taken. Choose another one.' });
 			return;
 		}
 
@@ -42,9 +43,8 @@ authRoutes.post('/signup', (req, res, next) => {
 		const hashPass = bcrypt.hashSync(password, salt);
 
 		const aNewUser = new User({
-			username: username,
-      password: hashPass
-		});
+			email, username, password: hashPass, runnerType, experience, stravaLink, personalLink
+		})
 
 		aNewUser.save((err) => {
 			if (err) {

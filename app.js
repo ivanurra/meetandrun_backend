@@ -13,6 +13,7 @@ const passport      = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt        = require('bcryptjs');
 const cors          = require("cors");
+const flash         = require("connect-flash")
 
 const User = require('./models/User')
 
@@ -78,10 +79,18 @@ passport.deserializeUser((id, callback) => {
 	User.findById(id).then((user) => callback(null, user)).catch((err) => callback(err));
 });
 
+app.use(flash())
+
 //Middleware del Strategy
 passport.use(
-	new LocalStrategy({ passReqToCallback: true }, (req, username, password, next) => {
-		User.findOne({ username })
+	new LocalStrategy({ 
+    // passReqToCallback: true 
+    usernameField : 'email',
+    passwordField : 'password',
+    passReqToCallback : true 
+  }, 
+  (req, email, password, next) => {
+		User.findOne({ email })
 			.then((user) => {
 				if (!user) {
 					return next(null, false, { message: 'Incorrect username' });
