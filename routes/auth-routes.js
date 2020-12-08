@@ -10,7 +10,7 @@ const User = require('../models/User')
 
 authRoutes.post('/signup', (req, res, next) => {
 
-	const { email, username, password, runnerType, experience, stravaLink, personalLink} = req.body
+	const { email, username, password, runnerType, helperType, stravaLink, personalLink} = req.body
 
 	if (!email || !password) {
 		res.status(400).json({ message: 'Provide email and password' })
@@ -39,7 +39,7 @@ authRoutes.post('/signup', (req, res, next) => {
 		const hashPass = bcrypt.hashSync(password, salt)
 
 		const aNewUser = new User({
-			email, username, password: hashPass, runnerType, experience, stravaLink, personalLink
+			email, username, password: hashPass, runnerType, helperType, stravaLink, personalLink
 		})
 
 		aNewUser.save((err) => {
